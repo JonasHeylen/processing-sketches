@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>Swarmy</title>      
+<script language="javascript" src="processing-0.9.7.min.js"></script>
+<script type="text/javascript">
+	if(window.addEventListener){window.addEventListener("load",function(){var scripts=document.getElementsByTagName("script");for(var i=0;i<scripts.length;i++){if(scripts[i].type=="application/processing"){var src=scripts[i].src,canvas=scripts[i].nextSibling;if(src&&src.indexOf("#")){canvas=document.getElementById(src.substr(src.indexOf("#")+1));}else{while(canvas&&canvas.nodeName.toUpperCase()!="CANVAS")canvas=canvas.nextSibling;}if(canvas){Processing(canvas,scripts[i].text);}}}},false);}
+</script>
+</head>
+<body>
+<script type="application/processing">
+/* CONSTANTS */
+
+int SIZE = 512; // window size
+int BG = 30;    // background color
+int FG = 170;   // foreground color
+int R = 5;      // radius
+int N = 20;     // number of objects
+double M = 1;   // mass
+double K = 0.0001;   // spring constant
+double F = 0.0002 * N;   // coefficient of friction
+
+/* STATE */
+
+float[] posx = new float[N];
+float[] posy = new float[N];
+double[] dx = new double[N];
+double[] dy = new double[N];
+
+/* SETUP */
+
+void setup() {
+  smooth();
+  frameRate(30);
+  size(SIZE, SIZE);
+  background(BG);
+  fill(FG);
+  noStroke();
+  
+  // random initial positions
+  for(int i = 0; i < N; i++) {
+    posx[i] = random(SIZE);
+    posy[i] = random(SIZE);
+    dx[i] = 0;
+    dy[i] = 0;
+  }
+}
+
+/* DRAW */
+
+void draw() {
+  background(BG);
+  for(int i = 0; i < N; i++) {
+    calculateDxy(i);
+    calculatePos(i);
+    fill(255-abs((float) dx[i])*20, 255-abs((float) dy[i])*20, 255);
+    e(posx[i], posy[i]);
+  }
+}
+
+/* PHYSICS */
+ 
+void calculatePos(int i) {
+  posx[i] += dx[i];
+  posy[i] += dy[i];
+}
+
+void calculateDxy(int i) {
+  double ddx = 0;
+  double ddy = 0;
+  for(int j = 0; j < N; j++) {
+    /* spring force */
+    ddx += K * (posx[j] - posx[i]) / M;
+    ddy += K * (posy[j] - posy[i]) / M;
+    /*
+    ddx += swarm(posx[j] - posx[i]) * (posx[j] - posx[i]) / M;
+    ddy += swarm(posy[j] - posy[i]) * (posy[j] - posy[i]) / M;
+    */
+  }
+  /* follow mouse */
+  ddx += N * K * (mouseX - posx[i]) / M;
+  ddy += N * K * (mouseY - posy[i]) / M;
+  /* friction */
+  ddx += - F * dx[i];
+  ddy += - F * dy[i];
+  /* random perturbations */
+  ddx += random(-0.5, 0.5);
+  ddy += random(-0.5, 0.5);
+  
+  dx[i] += ddx;
+  dy[i] += ddy;
+}
+
+/*double swarm(float d) {
+  float d1 = 10;
+  float d2 = 50;
+  float f1 = -0.001;
+  float f2 = 0.002;
+  if (d < 0) {
+    return f1;
+  } else if (d < d1) {
+    return (f2 - f1) / d1 * d + f1;
+  } else if (d < d2) {
+    return -f2 / (d2 - d1) * d + d2 / (d2 - d1) * f2;
+  } else {
+    return 0;
+  }
+}*/
+
+/* HELPERS */
+
+void e(float x, float y) {
+  ellipse(x, y, R, R);
+}
+
+</script><canvas width="512px" height="512px"></canvas>
+<p>Swarmy by <a href="http://jonasheylen.posterous.com/">Jonas Heylen</a> (<a
+	href="http://twitter.com/JonasHeylen">Twitter</a>)</p>
+<p>Created with <a href="http://processingjs.org/">Processing.js</a></p>
+</body>
+</html>
+
