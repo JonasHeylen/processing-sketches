@@ -5,6 +5,22 @@
 <script type="text/javascript">
   if(window.addEventListener){window.addEventListener("load",function(){var scripts=document.getElementsByTagName("script");for(var i=0;i<scripts.length;i++){if(scripts[i].type=="application/processing"){var src=scripts[i].src,canvas=scripts[i].nextSibling;if(src&&src.indexOf("#")){canvas=document.getElementById(src.substr(src.indexOf("#")+1));}else{while(canvas&&canvas.nodeName.toUpperCase()!="CANVAS")canvas=canvas.nextSibling;}if(canvas){Processing(canvas,scripts[i].text);}}}},false);}
 </script>
+<script type="text/javascript">
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-19548543-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+	 var ga = document.createElement('script'); ga.type = 'text/javascript';
+	 ga.async = true;
+	 ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
+		 'http://www') + '.google-analytics.com/ga.js';
+	 var s = document.getElementsByTagName('script')[0];
+	 s.parentNode.insertBefore(ga, s);
+	 })();
+
+</script>
 </head>
 <body>
 <script type="application/processing">
