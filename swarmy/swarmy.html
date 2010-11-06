@@ -1,9 +1,9 @@
 <html>
 <head>
-<title>Swarmy</title>      
+<title>Swarmy</title>
 <script language="javascript" src="processing-0.9.7.min.js"></script>
 <script type="text/javascript">
-	if(window.addEventListener){window.addEventListener("load",function(){var scripts=document.getElementsByTagName("script");for(var i=0;i<scripts.length;i++){if(scripts[i].type=="application/processing"){var src=scripts[i].src,canvas=scripts[i].nextSibling;if(src&&src.indexOf("#")){canvas=document.getElementById(src.substr(src.indexOf("#")+1));}else{while(canvas&&canvas.nodeName.toUpperCase()!="CANVAS")canvas=canvas.nextSibling;}if(canvas){Processing(canvas,scripts[i].text);}}}},false);}
+  if(window.addEventListener){window.addEventListener("load",function(){var scripts=document.getElementsByTagName("script");for(var i=0;i<scripts.length;i++){if(scripts[i].type=="application/processing"){var src=scripts[i].src,canvas=scripts[i].nextSibling;if(src&&src.indexOf("#")){canvas=document.getElementById(src.substr(src.indexOf("#")+1));}else{while(canvas&&canvas.nodeName.toUpperCase()!="CANVAS")canvas=canvas.nextSibling;}if(canvas){Processing(canvas,scripts[i].text);}}}},false);}
 </script>
 </head>
 <body>
@@ -16,8 +16,9 @@ int FG = 170;   // foreground color
 int R = 5;      // radius
 int N = 20;     // number of objects
 double M = 1;   // mass
-double K = 0.0001;   // spring constant
-double F = 0.0002 * N;   // coefficient of friction
+double K = 0.0001;     // spring constant
+double F = 0.0002 * N; // coefficient of friction
+double P = 0.5;        // random perturbation
 
 /* STATE */
 
@@ -35,7 +36,7 @@ void setup() {
   background(BG);
   fill(FG);
   noStroke();
-  
+
   // random initial positions
   for(int i = 0; i < N; i++) {
     posx[i] = random(SIZE);
@@ -58,7 +59,7 @@ void draw() {
 }
 
 /* PHYSICS */
- 
+
 void calculatePos(int i) {
   posx[i] += dx[i];
   posy[i] += dy[i];
@@ -68,13 +69,11 @@ void calculateDxy(int i) {
   double ddx = 0;
   double ddy = 0;
   for(int j = 0; j < N; j++) {
-    /* spring force */
-    ddx += K * (posx[j] - posx[i]) / M;
-    ddy += K * (posy[j] - posy[i]) / M;
-    /*
-    ddx += swarm(posx[j] - posx[i]) * (posx[j] - posx[i]) / M;
-    ddy += swarm(posy[j] - posy[i]) * (posy[j] - posy[i]) / M;
-    */
+    if (i != j) {
+      /* spring force */
+      ddx += K * (posx[j] - posx[i]) / M;
+      ddy += K * (posy[j] - posy[i]) / M;
+    }
   }
   /* follow mouse */
   ddx += N * K * (mouseX - posx[i]) / M;
@@ -83,28 +82,12 @@ void calculateDxy(int i) {
   ddx += - F * dx[i];
   ddy += - F * dy[i];
   /* random perturbations */
-  ddx += random(-0.5, 0.5);
-  ddy += random(-0.5, 0.5);
-  
+  ddx += random(-P, P);
+  ddy += random(-P, P);
+
   dx[i] += ddx;
   dy[i] += ddy;
 }
-
-/*double swarm(float d) {
-  float d1 = 10;
-  float d2 = 50;
-  float f1 = -0.001;
-  float f2 = 0.002;
-  if (d < 0) {
-    return f1;
-  } else if (d < d1) {
-    return (f2 - f1) / d1 * d + f1;
-  } else if (d < d2) {
-    return -f2 / (d2 - d1) * d + d2 / (d2 - d1) * f2;
-  } else {
-    return 0;
-  }
-}*/
 
 /* HELPERS */
 
@@ -114,7 +97,7 @@ void e(float x, float y) {
 
 </script><canvas width="512px" height="512px"></canvas>
 <p>Swarmy by <a href="http://jonasheylen.posterous.com/">Jonas Heylen</a> (<a
-	href="http://twitter.com/JonasHeylen">Twitter</a>)</p>
+  href="http://twitter.com/JonasHeylen">Twitter</a>)</p>
 <p>Created with <a href="http://processingjs.org/">Processing.js</a></p>
 </body>
 </html>
